@@ -1,36 +1,43 @@
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let todos = JSON.parse(localStorage.getItem('todos')) || [];
 
-function renderTasks() {
-  const taskList = document.getElementById('taskList');
-  taskList.innerHTML = '';
-
-  tasks.forEach((task, index) => {
-    const li = document.createElement('li');
-    li.textContent = task;
-
-    const delBtn = document.createElement('button');
-    delBtn.textContent = 'Delete';
-    delBtn.onclick = () => deleteTask(index);
-
-    li.appendChild(delBtn);
-    taskList.appendChild(li);
-  });
-
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+function saveTodos() {
+  localStorage.setItem('todos', JSON.stringify(todos));
 }
 
-function addTask() {
-  const taskInput = document.getElementById('taskInput');
-  if (taskInput.value.trim() !== '') {
-    tasks.push(taskInput.value.trim());
-    taskInput.value = '';
-    renderTasks();
+function renderTodos() {
+  const todoList = document.getElementById('todoList');
+  todoList.innerHTML = '';
+
+  todos.forEach((todo, index) => {
+    const li = document.createElement('li');
+    li.textContent = todo.text;
+    li.className = todo.completed ? 'completed' : '';
+
+    const completeBtn = document.createElement('button');
+    completeBtn.textContent = todo.completed ? 'Undo' : 'Mark Done';
+    completeBtn.onclick = () => toggleComplete(index);
+
+    li.appendChild(completeBtn);
+    todoList.appendChild(li);
+  });
+}
+
+function addTodo() {
+  const input = document.getElementById('todoInput');
+  const text = input.value.trim();
+  if (text !== '') {
+    todos.push({ text, completed: false });
+    saveTodos();
+    renderTodos();
+    input.value = '';
   }
 }
 
-function deleteTask(index) {
-  tasks.splice(index, 1);
-  renderTasks();
+function toggleComplete(index) {
+  todos[index].completed = !todos[index].completed;
+  saveTodos();
+  renderTodos();
 }
 
-renderTasks();
+// Initial render
+renderTodos();
